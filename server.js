@@ -1,6 +1,7 @@
 const mysql = require("mysql");
 const inquirer = require("inquirer");
-//require('console.table');
+require("console.table");
+
 //const express = require("express");
 //const app = express();
 
@@ -10,11 +11,11 @@ var connection = mysql.createConnection({
   port: 3306,
   user: "root",
   password: "Brontoe13",
-  database: "employees_DB"
+  database: "employees_DB",
 });
 
 // connect to the mysql server and sql database
-connection.connect(function(err) {
+connection.connect(function (err) {
   if (err) throw err;
   // run the start function after the connection is made to prompt the user
   start();
@@ -28,47 +29,61 @@ function start() {
       type: "list",
       message: "What would you like to do?",
       choices: [
-        "View All Employees", 
-        "View All Employees by Department", 
-        "View All Employees by Manager",
+        "View All Employees",
+        "View Departments",
+        "View Employee roles",
         "Add Employee",
+        "Add Department",
+        "Add Role",
         "Remove Employee",
         "Update Employee Role",
         "Update Employee Manager",
-        "Quit"
-    ]
+        "Quit",
+      ],
     })
-    .then(function(answer) {
+    .then(function (answer) {
       // based on user choice
       if (answer.startq === "View All Employees") {
         viewAll();
-      }else if(answer.startq === "View All Employees by Department") {
+      } else if (answer.startq === "View Departments") {
         viewDepartment();
-      }else if(answer.startq === "View All Employees by Manager") {
-            viewManager();
-        }else if(answer.startq === "Add Employee") {
-            addEmployee();
-        }else if(answer.startq === "Remove Employee") {
-            removeEmployee();  
-        }else if(answer.startq === "Update Employee Role") {
-            updateRole(); 
-         }else if(answer.startq === "Update Employee Manager") {
-            updateManager();          
-      } else{
+      } else if (answer.startq === "View Employee roles") {
+        viewRoles();
+      } else if (answer.startq === "Add Employee") {
+        addEmployee();
+      } else if (answer.startq === "Add Department") {
+        addDepartment();
+      } else if (answer.startq === "Add Role") {
+        addDepartment();
+      } else if (answer.startq === "Remove Employee") {
+        removeEmployee();
+      } else if (answer.startq === "Update Employee Role") {
+        updateRole();
+      } else if (answer.startq === "Update Employee Manager") {
+        updateManager();
+      } else {
         connection.end();
       }
-    })
+    });
 }
 function viewAll() {
   var query = "SELECT * FROM employee";
-      connection.query(query, function(err, res) {
-          console.log(`EMPLOYEES:`)
-      res.forEach(employee => {
-          console.log(`ID: ${employee.id} | Name: ${employee.first_name} ${employee.last_name} | Role ID: ${employee.role_id} | Manager ID: ${employee.manager_id}`);
-      })
-      start();
-      });
+  connection.query(query, function (err, res) {
+    if (err) throw err;
+      console.table(res);
+    });
+    start(); 
+};
+
+function viewDepartment() {
+  var query = "SELECT * FROM department";
+  connection.query(query, function (err, res) {
+    if (err) throw err;
+    console.table(res);
+    });
+    start();
   };
+
 // function to handle posting new employees
 function addEmployee() {
   // prompt for info about the name of the employee being added
@@ -77,21 +92,22 @@ function addEmployee() {
       {
         name: "first",
         type: "input",
-        message: "What is the first name of the employee you would like to add?"
+        message:
+          "What is the first name of the employee you would like to add?",
       },
-      { 
+      {
         name: "last",
         type: "input",
-        message: "What is the last name of the employee you would like to add?"
+        message: "What is the last name of the employee you would like to add?",
       },
-      { 
+      {
         name: "roleName",
         type: "input",
-        message: "What is the role of this employee?"
-      }
+        message: "What is the role of this employee?",
+      },
     ])
     //need to add role and manager questions
-    .then(function(answer) {
+    .then(function (answer) {
       // when finished prompting, insert a new item into the db with that info
       connection.query(
         "INSERT INTO employee SET ?",
@@ -99,9 +115,9 @@ function addEmployee() {
           first_name: answer.first,
           last_name: answer.last,
           role_id: answer.roleName,
-          manager_id: answer.manager
+          manager_id: answer.manager,
         },
-        function(err) {
+        function (err) {
           if (err) throw err;
           console.log("Your employee was created successfully!");
           // re-prompt the user for if they want to bid or post
@@ -118,16 +134,18 @@ function removeEmployee() {
       {
         name: "first",
         type: "input",
-        message: "What is the first name of the employee you would like to remove?"
+        message:
+          "What is the first name of the employee you would like to remove?",
       },
-      { 
+      {
         name: "last",
         type: "input",
-        message: "What is the last name of the employee you would like to remove?"
-      }
+        message:
+          "What is the last name of the employee you would like to remove?",
+      },
     ])
     //need to add role and manager questions
-    .then(function(answer) {
+    .then(function (answer) {
       // when finished prompting, insert a new item into the db with that info
       connection.query(
         "DELETE FROM employee SET ?",
@@ -135,9 +153,9 @@ function removeEmployee() {
           first_name: answer.first,
           last_name: answer.last,
           role_id: answer.role,
-          manager_id: answer.manager
+          manager_id: answer.manager,
         },
-        function(err) {
+        function (err) {
           if (err) throw err;
           console.log("Your employee was removed successfully!");
           // re-prompt the user for if they want to bid or post
@@ -154,20 +172,23 @@ function updateRole() {
       {
         name: "first",
         type: "input",
-        message: "What is the first name of the employee you would like to remove?"
+        message:
+          "What is the first name of the employee you would like to remove?",
       },
-      { 
+      {
         name: "last",
         type: "input",
-        message: "What is the last name of the employee you would like to remove?"
-      }
+        message:
+          "What is the last name of the employee you would like to remove?",
+      },
     ])
     //need to add role and manager questions
-    .then(function(answer) {
+    .then(function (answer) {
       // when finished prompting, insert a new item into the db with that info
       connection.query(
-        "UPDATE employee SET ? WHERE ?",[{role_id: answer.role},{last_name: answer.last}],
-        function(err) {
+        "UPDATE employee SET ? WHERE ?",
+        [{ role_id: answer.role }, { last_name: answer.last }],
+        function (err) {
           if (err) throw err;
           console.log("Your employee role has been updated successfully!");
           // re-prompt the user to the start menu

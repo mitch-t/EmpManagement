@@ -4,6 +4,7 @@
   "description": "app using inquirer and mysql",
   "main": "server.js",
   "dependencies": {
+    "console.table": "^0.10.0",
     "inquirer": "^6.5.2",
     "mysql": "^2.18.1"
   }
