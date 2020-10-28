@@ -46,7 +46,7 @@ function start() {
       if (answer.startq === "View All Employees") {
         viewAll();
       } else if (answer.startq === "View Departments") {
-        viewDepartment();
+        viewDepartments();
       } else if (answer.startq === "View Employee roles") {
         viewRoles();
       } else if (answer.startq === "Add Employee") {
@@ -54,7 +54,7 @@ function start() {
       } else if (answer.startq === "Add Department") {
         addDepartment();
       } else if (answer.startq === "Add Role") {
-        addDepartment();
+        addRole();
       } else if (answer.startq === "Remove Employee") {
         removeEmployee();
       } else if (answer.startq === "Update Employee Role") {
@@ -70,19 +70,45 @@ function viewAll() {
   var query = "SELECT * FROM employee";
   connection.query(query, function (err, res) {
     if (err) throw err;
-      console.table(res);
-    });
-    start(); 
-};
+    console.table(res);
+  });
+  start();
+}
 
-function viewDepartment() {
+function viewDepartments() {
   var query = "SELECT * FROM department";
   connection.query(query, function (err, res) {
     if (err) throw err;
     console.table(res);
+  });
+  start();
+}
+
+function viewRoles() {
+  var query = "SELECT * FROM role";
+  connection.query(query, function (err, res) {
+    if (err) throw err;
+    console.table(res);
+  });
+  start();
+}
+
+function addDepartment() {
+  inquirer
+    .prompt({
+      name: "department",
+      type: "input",
+      message: "What is the name of the new department?",
+    })
+    .then(function (answer) {
+      var query = "INSERT INTO department (name) VALUES ( ? )";
+      connection.query(query, answer.department, function (err, res) {
+        if (err) throw err;
+        console.table(res);
+      });
+      viewDepartments();
     });
-    start();
-  };
+}
 
 // function to handle posting new employees
 function addEmployee() {
@@ -106,7 +132,7 @@ function addEmployee() {
         message: "What is the role of this employee?",
       },
     ])
-    //need to add role and manager questions
+    //need to add manager questions
     .then(function (answer) {
       // when finished prompting, insert a new item into the db with that info
       connection.query(
@@ -115,16 +141,68 @@ function addEmployee() {
           first_name: answer.first,
           last_name: answer.last,
           role_id: answer.roleName,
-          manager_id: answer.manager,
         },
         function (err) {
           if (err) throw err;
           console.log("Your employee was created successfully!");
-          // re-prompt the user for if they want to bid or post
+          viewAll();
+          // re-prompt the user to the start menu
           start();
         }
       );
     });
+}
+function addRole() {
+  connection.query('SELECT * FROM department', function(err, res) {
+      if (err) throw (err);
+  inquirer
+      .prompt([{
+          name: "title",
+          type: "input",
+          message: "What is the title of the new role?",
+        }, 
+        {
+          name: "salary",
+          type: "input",
+          message: "What is the salary of the new role?",
+        },
+        {
+          name: "departmentName",
+          type: "list",
+          message: "Which department does this role fall under?",
+          choices: function() {
+              var choicesArray = [];
+              res.forEach(res => {
+                  choicesArray.push(
+                      res.name
+                  );
+              })
+              return choicesArray;
+            }
+        }
+        ]) 
+
+//  get the id from the departments table 
+      .then(function(answer) {
+      const department = answer.departmentName;
+      connection.query('SELECT * FROM DEPARTMENT', function(err, res) {
+      
+          if (err) throw (err);
+       let filteredDept = res.filter(function(res) {
+          return res.name == department;
+      }
+      )
+      let id = filteredDept[0].id;
+     let query = "INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)";
+     let values = [answer.title, parseInt(answer.salary), id]
+     console.log(values);
+      connection.query(query, values,function (_err, _res, _fields) {
+          console.log(`You have added this role: ${(values[0]).toUpperCase()}.`)
+      })
+          viewRoles()
+          })
+      })
+  })
 }
 
 function removeEmployee() {
