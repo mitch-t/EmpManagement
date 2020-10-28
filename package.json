@@ -1,0 +1,10 @@
+{
+  "name": "emp-management",
+  "version": "1.0.0",
+  "description": "app using inquirer and mysql",
+  "main": "server.js",
+  "dependencies": {
+    "inquirer": "^6.5.2",
+    "mysql": "^2.18.1"
+  }
+}
