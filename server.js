@@ -31,7 +31,9 @@ function start() {
         "View Employee Roles",
         "Add Employee",
         "Add Department",
+        "Remove Department",
         "Add Role",
+        "Remove Role",
         "Remove Employee",
         "Update Employee Role",
         // "Update Employee Manager",
@@ -54,10 +56,15 @@ function start() {
           break;
         case "Add Department":
           addDepartment();
+        case "Remove Department":
+          deleteDept(); 
           break;
         case "Add Role":
           addRole();
           break;
+        case "Remove Role":
+          deleteRole();
+          break; 
         case "Update Employee Role":
           updateRole();
           break;
@@ -210,7 +217,53 @@ function deleteEmp() {
           })
   });
 }
-// function to handle posting new employees
+
+function deleteDept() {
+  let departmentsArray = [];
+  connection.query("SELECT * FROM department", function (err, results) {
+      for (let i = 0; i < results.length; i++) {
+          let department = results[i]
+          departmentsArray.push(department)
+      }
+      console.table(departmentsArray);
+      inquirer.prompt(
+          [{
+              name: "delete",
+              type: "input",
+              message: "Enter the department ID you would like to delete?",
+          }]).then(function (answer) {
+              let deletedDept = answer.delete
+              connection.query("DELETE FROM department WHERE id = ?", deletedDept, function (err, results) {
+                  if (err) throw err;
+              })
+              menu();
+          })
+  });
+}
+
+function deleteRole() {
+  let rolesArray = [];
+  connection.query("SELECT * FROM role", function (err, results) {
+      for (let i = 0; i < results.length; i++) {
+          let role = results[i]
+          rolesArray.push(role)
+      }
+      console.table(rolesArray);
+      inquirer.prompt(
+          [{
+              name: "delete",
+              type: "input",
+              message: "Enter the role ID you would like to delete?",
+          }]).then(function (answer) {
+              let deletedRole = answer.delete
+              connection.query("DELETE FROM role WHERE id = ?", deletedRole, function (err, results) {
+                  if (err) throw err;
+              })
+              menu();
+          })
+  });
+}
+// function to handle posting new employees 
 function addEmployee() {
   connection.query("SELECT * FROM role", function (err, result) {
     if (err) throw err;
