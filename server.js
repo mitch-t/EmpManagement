@@ -1,3 +1,5 @@
+//need to add join to combine tables
+
 const mysql = require("mysql");
 const inquirer = require("inquirer");
 require("console.table");
@@ -14,16 +16,29 @@ var connection = mysql.createConnection({
 // connect to the mysql server and sql database
 connection.connect(function (err) {
   if (err) throw err;
-  // run the start function after the connection is made to prompt the user
+  startIcon();
   start();
 });
+function startIcon() {
 
+ let icon = `
+      $$$$$$$                                                   $$$$$$                                                  
+      $       $    $ $$$$$  $       $$$$  $   $ $$$$$$ $$$$$$    $    $    $$   $$$$$   $$   $$$$$    $$    $$$$  $$$$$$ 
+      $       $$  $$ $    $ $      $    $  $ $  $      $         $     $  $  $    $    $  $  $    $  $  $  $      $      
+      $$$$$   $ $$ $ $    $ $      $    $   $   $$$$$  $$$$$     $     $ $    $   $   $    $ $$$$$  $    $  $$$$  $$$$$  
+      $       $    $ $$$$$  $      $    $   $   $      $         $     $ $$$$$$   $   $$$$$$ $    $ $$$$$$      $ $      
+      $       $    $ $      $      $    $   $   $      $         $     $ $    $   $   $    $ $    $ $    $ $    $ $      
+      $$$$$$$ $    $ $      $$$$$$  $$$$    $   $$$$$$ $$$$$$    $$$$$$  $    $   $   $    $ $$$$$  $    $  $$$$  $$$$$$ 
+  `;
+
+  console.log(icon); 
+}
 // function which prompts the user for what action they should take
 function start() {
   inquirer
     .prompt({
       name: "startq",
-      type: "list",
+      type: "list", 
       message: "What would you like to do?",
       choices: [
         "View All Employees",
@@ -100,7 +115,7 @@ function menu() {
 }
 
 function viewAll() {
-  connection.query("SELECT * FROM employee", (err, res) => {
+  connection.query( "SELECT employee.*, role.title, role.salary, department.name FROM employee LEFT JOIN role ON employee.role_id = role.id LEFT JOIN department ON role.department_id = department.id ORDER BY employee.id",(err, res) => {
     if (err) throw err;
     console.table(res);
     menu();
@@ -408,3 +423,4 @@ function updateRole() {
       });
   });
 }
+
