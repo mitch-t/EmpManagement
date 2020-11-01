@@ -24,7 +24,8 @@ To install Employee Database Tracker, follow these steps:  Must have a windows/m
 ## Using Employee Database Tracker
 User must open nodejs and run the server.js file. You will then be presented with an options menu that allows to view your employee database as well as update the data.
 
-## Using Employee Database Tracker
+## Screenshots
+![Screenshot (87)](https://user-images.githubusercontent.com/66184450/97796291-6dd73c80-1bcd-11eb-90c8-68cc031af756.png)
 
 ## Contributing:
 
