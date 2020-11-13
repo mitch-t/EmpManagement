@@ -73,6 +73,7 @@ function start() {
           break;
         case "Add Department":
           addDepartment();
+          brak;
         case "Remove Department":
           deleteDept(); 
           break;
