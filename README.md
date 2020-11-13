@@ -19,7 +19,7 @@
 Employee Database Tracker - This is a CLI app that is run using node inquirer and mySQL. This app allows the user to add or remove employess and update their roles in a company.
 
 ## Installing 
-To install Employee Database Tracker, follow these steps:  Must have a windows/mac/android machine with the latest version of nodejs installed as well as the inquirer, mySQL, and console.table packages installed. This app works in conjuction with mySQL so installing mySQL workbench and server is also necessary. 
+To install Employee Database Tracker, follow these steps:  Must have a windows/mac/android machine with the latest version of nodejs installed as well as the inquirer, mySQL, and console.table packages installed. This app works in conjuction with mySQL so installing mySQL workbench and server is also necessary. The commands needed to run the app: "npm install" "node server.js"
 
 ## Using Employee Database Tracker
 User must open nodejs and run the server.js file. You will then be presented with an options menu that allows to view your employee database as well as update the data.
